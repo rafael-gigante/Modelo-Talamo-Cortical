@@ -1,15 +1,15 @@
-# Division Factor:
+# Fator de divisão:
 fac = fac_PD
 
-# Factor for coupling strengths
-r_s = rand(nEs) # Layer S
-r_m = rand(nEm) # Layer M
-r_d = rand(nEd) # Layer D
+# Fator para as forças de acoplamento
+r_s = rand(nEs) # Camada S
+r_m = rand(nEm) # Camada M
+r_d = rand(nEd) # Camada D
 r_ins = rand(nINs) # INs
-r_ret = rand(nIret) # Reticular nucleus
-r_rel = rand(nErel) # Relay nucleus
+r_ret = rand(nIret) # Núcleo Reticular
+r_rel = rand(nErel) # Núcleo Relé
 
-# COUPLING STRENGTHS within each structure
+# Forças de acoplamente intra estrutural
 W_EEs = (-5e1 / fac) .* r_s # S to S
 W_EEm = (-5e1 / fac) .* r_m # M to M
 W_EEd = (-5e1 / fac) .* r_d # D to D
@@ -17,7 +17,7 @@ W_IIins = (-5e1 / fac) .* r_ins # INs to INs
 W_IIret = (-5e1 / fac) .* r_ret # Reticular to Reticular
 W_EErel = (0 / fac) .* r_rel # Relay to Relay
 
-# COUPLING STRENGTHS between structures (PD)
+# Forças de acoplamento entre estruturas (PD)
 # S
 W_EEsm = (3e2 / fac) .* r_s # M to S
 W_EEsd = (5e2 / fac) .* r_s # D to S
@@ -108,4 +108,4 @@ Z[4,5] = mean(W_EIRelINs)
 Z[6,5] = mean(W_EIRelRet)
 
 ZZ_pd = copy(Z)
-Zx_pd = Z / maximum(Z)  # Normalize by the max value in Z
+Zx_pd = Z / maximum(Z)  # Normalização

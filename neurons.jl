@@ -16,11 +16,12 @@ function neuron_parameters(a, b, c, d, n1, n2, T1, T2, neuron_type)
     end
 end
 
-# Number of Excitatory & Inhibitory Neurons in the structures
+# Número de neurônios em cada estrutura
+# S layer, M layer, D layer, INs, TCR, TRN
 nEs, nEm, nEd, nErel, nINs, nIret = 100, 100, 100, 100, 100, 40
 n_tot = nEs + nEm + nEm + nINs + nErel + nIret
 
-# Distribution of neurons in each structure
+# Distribuição de neurônios em cada estrutura
 nE1s, nE2s = Int(0.5 * nEs), Int(0.5 * nEs)
 nE1m, nE2m = Int(1 * nEm), Int(0 * nEm)
 nE1d, nE2d = Int(0.7 * nEd), Int(0.3 * nEd)
@@ -28,7 +29,7 @@ nErel1, nErel2 = Int(0.7 * nErel), Int(0.3 * nErel)
 nINs1, nINs2 = Int(0.5 * nINs), Int(0.5 * nINs)
 nIret1, nIret2 = Int(0.5 * nIret), Int(0.5 * nIret)
 
-# Types of Excitatory and Inhibitory neurons in each structure
+# Tipos de neurônios excitatórios e inibitórios em cada estrutura
 E1s, E2s = 1, 2
 E1m, E2m = 1, 1
 E1d, E2d = 1, 2
@@ -36,28 +37,28 @@ I1s, I2s = 3, 4
 I1ret, I2ret = 6, 6
 E1rel, E2rel = 5, 5
 
-# NEURON PARAMETERS
+# Parâmetros dos neurônios
 # 1)RS  2)IB   3)FS   4)LTS   5)Rel(TC)   6)Ret(TR)
 a = [0.02, 0.02, 0.1, 0.02, 0.02, 0.02]
 b = [0.2, 0.2, 0.2, 0.25, 0.25, 0.25]
 c = [-65, -55, -65, -65, -65, -65]
 d = [8, 4, 2, 2, 0.05, 2.05]
 
-# Neurons variations following the algorithm by Izhikevich:
-# S layer neurons
+# Diversidade dos parâmetros dos neurônios de acordo com o algoritmo de Izhikevich
+# Camada S
 aEs, bEs, cEs, dEs = neuron_parameters(a, b, c, d, nE1s, nE2s, E1s, E2s, "E")
-# M layer neurons
+# Camada M
 aEm, bEm, cEm, dEm = neuron_parameters(a, b, c, d, nE1m, nE2m, E1m, E2m, "E")
-# D layer neurons
+# Camada P
 aEd, bEd, cEd, dEd = neuron_parameters(a, b, c, d, nE1d, nE2d, E1d, E2d, "E")
-# TCR neurons
+# Neurônios Relé
 aErel, bErel, cErel, dErel = neuron_parameters(a, b, c, d, nErel1, nErel2, E1rel, E2rel, "I")
-# INs neurons
+# INs
 aIs, bIs, cIs, dIs = neuron_parameters(a, b, c, d, nINs1, nINs2, I1s, I2s, "I")
-# TRN neurons
+# Neurônios Reticulares
 aIret, bIret, cIret, dIret = neuron_parameters(a, b, c, d, nIret1, nIret2, I1ret, I2ret, "I")
 ###########################################################################
-# DIRECT CURRENT:
+# Corrente DC:
 # 1)RS  2)IB   3)FS   4)LTS   5)Rel(TC)   6)Ret(TR)
 Idc = [3.5, 3.6, 3.8, 0.4, 0.6, 0.6] .+ 0.1
 

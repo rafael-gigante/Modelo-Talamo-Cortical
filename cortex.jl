@@ -22,9 +22,9 @@ function S_layer(a, b, c, d, n, v, u, r, x, Is,
         end
 
         v[k] += dt * (0.04 * v[k]^2 + 5 * v[k] - u[k] + 140 + Idc[k] +
-                      (W_EEss[k] * EPSC / n) +
-                      (W_EEsd[k] * EPSCd / n) + (W_EEsm[k] * EPSCm / n) + (W_Erel[k] * EPSC_rel / n) +
-                      (W_EI[k] * IPSC_in / n) + (W_Eret[k] * IPSC_ret / n) +
+                      (W_EEss[k] * EPSC / n) + # Auto-feedback
+                      (W_EEsd[k] * EPSCd / n) + (W_EEsm[k] * EPSCm / n) + (W_Erel[k] * EPSC_rel / n) + # Entradas excitatórias
+                      (W_EI[k] * IPSC_in / n) + (W_Eret[k] * IPSC_ret / n) + # Entradas inibitórias
                       I_psE - I_psI + Idbss + kisi[k])
         
         u[k] += dt * a[k] * (b[k] * v[k] - u[k])
@@ -62,9 +62,9 @@ function M_layer(a,b,c,d,n,v,u,r,x,Is,
         end
 
         v[k] += dt * (0.04 * v[k]^2 + 5 * v[k] - u[k] + 140 + Idc[k] +
-                (W_EEmm[k] * EPSC / n) +  # Self feedback
-                (W_EEms[k] * EPSCs / n) + (W_EEmd[k] * EPSCd / n) + (W_Erel[k] * EPSC_rel / n) + # Excitatory inputs
-                (W_EI[k] * IPSC_in / n) + (W_Eret[k] * IPSC_ret / n) + # Inhibitory inputs
+                (W_EEmm[k] * EPSC / n) +  # Auto-feedback
+                (W_EEms[k] * EPSCs / n) + (W_EEmd[k] * EPSCd / n) + (W_Erel[k] * EPSC_rel / n) + # Entradas excitatórias
+                (W_EI[k] * IPSC_in / n) + (W_Eret[k] * IPSC_ret / n) + # Entradas inibitórias
                 I_psE - I_psI + Idbss + kisi[k])
         
         u[k] += dt * a[k] * (b[k] * v[k] - u[k])
@@ -108,9 +108,9 @@ function D_layer(a, b, c, d, n, n_hyp, v, u, r, x, Is, rf, xf, Isf,
         end
 
     v[k] += dt * (0.04 * v[k]^2 + 5 * v[k] - u[k] + 140 + Idc[k] +
-            (W_EEdd[k] * EPSC / n) +  # Self feedback
-            (W_EEds[k] * EPSCs / n) + (W_EEdm[k] * EPSCm / n) + (W_Erel[k] * EPSC_rel / n) +  # Excitatory inputs
-            (W_EI[k] * IPSC_in / n) + (W_Eret[k] * IPSC_ret / n) + # Inhibitory inputs
+            (W_EEdd[k] * EPSC / n) +  # Auto-feedback
+            (W_EEds[k] * EPSCs / n) + (W_EEdm[k] * EPSCm / n) + (W_Erel[k] * EPSC_rel / n) +  # Entradas excitatórias
+            (W_EI[k] * IPSC_in / n) + (W_Eret[k] * IPSC_ret / n) + # Entradas inibitórias
             I_psE - I_psI + Idbss + kisi[k])
 
     u[k] += dt * a[k] * (b[k] * v[k] - u[k])
@@ -132,7 +132,7 @@ function D_layer(a, b, c, d, n, n_hyp, v, u, r, x, Is, rf, xf, Isf,
     rf, xf, Isf = rsF, xsF, IsynF
     IseF[k] = IpostF
 
-    sp .= 0  # Reset spike array
+    sp .= 0
     end
 
     EPSC = sum(Ise)
@@ -157,9 +157,9 @@ function ctx_INs(a,b,c,d,n,v,u,r,x,Is,
         end
 
         v[k] += dt * (0.04 * v[k]^2 + 5 * v[k] - u[k] + 140 + Idc[k] +
-                    (W_II[k] * IPSC / n) +  # Self feedback
-                    (W_IEd[k] * EPSCd / n) + (W_IEs[k] * EPSCs / n) + (W_IEm[k] * EPSCm / n) + (W_Irel[k] * EPSC_rel / n) +  # Excitatory inputs
-                    (W_Iret[k] * IPSC_ret / n) +  # Inhibitory inputs
+                    (W_II[k] * IPSC / n) +  # Auto-feedback
+                    (W_IEd[k] * EPSCd / n) + (W_IEs[k] * EPSCs / n) + (W_IEm[k] * EPSCm / n) + (W_Irel[k] * EPSC_rel / n) +  # Entradas excitatórias
+                    (W_Iret[k] * IPSC_ret / n) +  # Entradas inibitórias
                     I_psE - I_psI + Idbss + kisi[k])
         u[k] += dt * a[k] * (b[k] * v[k] - u[k])
         

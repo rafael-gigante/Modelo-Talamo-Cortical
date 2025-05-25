@@ -24,9 +24,9 @@ function thm_rel(a, b, c, d, n, v, u, r, x, Is, rd, xd, Isd,
         end
         
         v[k] += dt * (0.04 * v[k]^2 + 5 * v[k] - u[k] + 140 + Idc[k] +
-                      (W_EE[k] * EPSC / n) +  # Self feedback
-                      (W_EErs[k] * EPSCs / n) + (W_EErm[k] * EPSCm / n) + (W_EErd[k] * EPSCd / n) +  # Excitatory inputs
-                      (W_EI_ret[k] * IPSC_ret / n) + (W_EI_IN[k] * IPSC_in / n) +  # Inhibitory inputs
+                      (W_EE[k] * EPSC / n) +  # Auto-feedback
+                      (W_EErs[k] * EPSCs / n) + (W_EErm[k] * EPSCm / n) + (W_EErd[k] * EPSCd / n) +  # Entradas excitatórias
+                      (W_EI_ret[k] * IPSC_ret / n) + (W_EI_IN[k] * IPSC_in / n) +  # Entradas inibitórias
                       I_psE - I_psI + Idbss + kisi[k])
         u[k] += dt * a[k] * (b[k] * v[k] - u[k])
         
@@ -72,9 +72,9 @@ function thm_ret(a, b, c, d, n, v, u, r, x, Is,
         end
         
         v[k] += dt * (0.04 * v[k]^2 + 5 * v[k] - u[k] + 140 + Idc[k] +
-                      (W_II[k] * IPSC / n) +  # Self feedback
-                      (W_IErs[k] * EPSCs / n) + (W_IErm[k] * EPSCm / n) + (W_IErd[k] * EPSCd / n) + (W_IE_rel[k] * EPSC_rel / n) +  # Excitatory inputs
-                      (W_II_IN[k] * IPSC_in / n) +  # Inhibitory inputs
+                      (W_II[k] * IPSC / n) +  # Auto-feedback
+                      (W_IErs[k] * EPSCs / n) + (W_IErm[k] * EPSCm / n) + (W_IErd[k] * EPSCd / n) + (W_IE_rel[k] * EPSC_rel / n) +  # Entradas excitatórias
+                      (W_II_IN[k] * IPSC_in / n) +  # Entradas inibitórias
                       I_psE - I_psI + Idbss + kisi[k])
         u[k] += dt * a[k] * (b[k] * v[k] - u[k])
         

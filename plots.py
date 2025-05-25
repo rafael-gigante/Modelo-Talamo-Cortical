@@ -2,50 +2,51 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import numpy as np
-import matplotlib.mlab as mlab
-import scipy.signal 
+import scipy.signal
+
+plt.rcParams.update({
+    'font.size': 12,
+    'axes.labelsize': 14,
+    'axes.titlesize': 14,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+    'figure.dpi': 300,
+    'savefig.dpi': 300
+})
 
 def plot_coupling_matrix(ZZ, Zx, condition="Normal"):
-    dd = "Modelo TC - julia\plots"
-    if not os.path.exists(dd):
-        os.makedirs(dd)
+    dd = "plots"
+    os.makedirs(dd, exist_ok=True)
 
-    # Plot and save the unnormalized matrix
-    plt.figure()
-    ax = sns.heatmap(ZZ, annot=True, cmap='bwr', vmin=-1, vmax=1)
-    ax.xaxis.set_ticks_position('top')
-    ax.xaxis.set_label_position('top')
-    plt.xticks(np.arange(0.5, len(ZZ), 1), labels=['S', 'M', 'D', 'CI', 'TCR', 'TRN'])
-    plt.yticks(np.arange(0.5, len(ZZ), 1), labels=['S', 'M', 'D', 'CI', 'TCR', 'TRN'], rotation='horizontal')
-    plt.title(f"TCM Coupling Matrix ({condition})")
-    figdest = os.path.join(dd, f"TCM_Coupling_Matrix_{condition}")
-    plt.savefig(figdest + ".png")
-    plt.close()
+    labels = ['S', 'M', 'P', 'INs', 'Rel', 'Ret']
 
-    # Plot and save the normalized matrix
-    plt.figure()
-    ax = sns.heatmap(Zx, annot=True, cmap='bwr', vmin=-1, vmax=1)
-    ax.xaxis.set_ticks_position('top')
-    ax.xaxis.set_label_position('top')
-    plt.xticks(np.arange(0.5, len(Zx), 1), labels=['S', 'M', 'D', 'CI', 'TCR', 'TRN'])
-    plt.yticks(np.arange(0.5, len(Zx), 1), labels=['S', 'M', 'D', 'CI', 'TCR', 'TRN'], rotation='horizontal')
-    plt.title(f"TCM Coupling Matrix ({condition})")
-    figdest = os.path.join(dd, f"TCM_Coupling_Matrix_Normalized_{condition}")
-    plt.savefig(figdest + ".png")
-    plt.close()
+    for matrix, suffix in zip([ZZ, Zx], ["", "_Normalized"]):
+        fig, ax = plt.subplots(figsize=(6, 5))
+        sns.heatmap(matrix, annot=True, cmap='bwr', vmin=-1, vmax=1,
+                    xticklabels=labels, yticklabels=labels)
+        ax.xaxis.set_ticks_position('top')
+        ax.xaxis.set_label_position('top')
+        plt.xticks(rotation=0)
+        plt.yticks(rotation=0)
+        #plt.title(f"TCM Coupling Matrix ({condition}{suffix})", pad=20)
+        plt.tight_layout()
+        figdest = os.path.join(dd, f"TCM_Coupling_Matrix{suffix}_{condition}.png")
+        plt.savefig(figdest, bbox_inches="tight")
+        plt.close()
 
 def dbs_plot(I_dbs, filename, xlim=None):
-    plt.figure()
-    t = np.arange(0, len(I_dbs))
-    plt.plot(t*0.1, I_dbs, linewidth=1, color='k')
+    plt.figure(figsize=(8, 4))
+    t = np.arange(0, len(I_dbs)) * 0.1
+    plt.plot(t, I_dbs, linewidth=1, color='k')
     if xlim:
         plt.xlim(xlim)
-    plt.xlabel("Time (ms)")
-    plt.ylabel("DBS Amplitude")
-    plt.title(filename.split("\\")[-1])  # Extracting file name for title
+    plt.xlabel("Tempo (ms)")
+    plt.ylabel("Amplitude da DBS")
+    #plt.title("Sinal de Estimulação")
     plt.grid(True)
-    # Save as .png (can change to .svg or .jpeg)
-    plt.savefig(filename + ".png", dpi=300, bbox_inches="tight")
+    plt.tight_layout()
+    plt.savefig(filename + ".png", bbox_inches="tight")
     plt.close()
 
 def raster_plot(nEs,nEm,nEd,nINs,nErel,nIret,n_tot,vEs,vEm,vEd,vIs,vRet,vRel,cIret,cErel,cIs,cEd,cEm,cEs,nSim,dt, fidD):
@@ -63,7 +64,7 @@ def raster_plot(nEs,nEm,nEd,nINs,nErel,nIret,n_tot,vEs,vEm,vEd,vIs,vRet,vRel,cIr
 
     firings = np.array(firings)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 6))
     ax.scatter(firings[:, 0], firings[:, 1], s=1, color='black')
 
     # Definir separações visuais para as estruturas
@@ -108,88 +109,107 @@ def raster_plot(nEs,nEm,nEd,nINs,nErel,nIret,n_tot,vEs,vEm,vEd,vIs,vRet,vRel,cIr
         ax.axvline(x=(t_tot), ymin=neuron_types_division[i]/n_tot, ymax=neuron_types_division[i+1]/n_tot, color=color2[i], linestyle='-', linewidth=2)
 
 
-    ax.set_xlabel("time (ms)")
-    ax.set_ylabel("neuron #")
+    ax.set_xlabel("Tempo (ms)")
+    ax.set_ylabel("Neurônio")
     ax.set_ylim(0,n_tot)
-    dd = "Modelo TC - julia\plots"
+    dd = "plots"
     if fidD == 0:
-        ax.set_title("Neuronal Spiking Raster Plot - PD condition")
+        #ax.set_title("Raster Plot - Condição PD")
         figdest = os.path.join(dd, f"raster_plot_PD")
     else:
-        ax.set_title("Neuronal Spiking Raster Plot - PD + DBS condition")
+        #ax.set_title("Raster Plot - Condição PD + DBS")
         figdest = os.path.join(dd, f"raster_plot_PD_DBS")
     plt.tight_layout()
     plt.savefig(figdest + ".png")
     plt.close()
 
-    
+def plot_PSD(f, S):
+    plt.figure(figsize=(8, 4))
+    plt.plot(f, S, c='k', linewidth=1)
+    plt.axvspan(13, 30, color='grey', alpha=0.3, label='Banda Beta')
+    plt.xlim([0, 100])
+    plt.xticks(np.arange(0, 101, 10))
+    plt.xlabel('Frequência (Hz)')
+    plt.ylabel(r'PSD [$mV^2$/Hz]')
+    #plt.title('Densidade Espectral de Potência (PSD)')
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig('plots/PSD.png', bbox_inches="tight")
+    plt.close()
 
-ZZ_diff = np.loadtxt("Modelo TC - julia/data/ZZ_diff.csv", delimiter=",")
-Zx_diff = np.loadtxt("Modelo TC - julia/data/Zx_diff.csv", delimiter=",")
-plot_coupling_matrix(ZZ_diff, Zx_diff, 'Difference')
-
-I_dbs_pre = np.loadtxt("Modelo TC - julia/data/I_dbs_pre.csv", delimiter=",")
-I_dbs_post = np.loadtxt("Modelo TC - julia/data/I_dbs_post.csv", delimiter=",")
-
-dt = 0.1
-
-nEs, nEm, nEd, nErel, nINs, nIret = 100, 100, 100, 100, 100, 40
-n_tot = nEs + nEm + nEm + nINs + nErel + nIret
-vEs = np.loadtxt("Modelo TC - julia/data/vEs.csv", delimiter=",")
-vEm = np.loadtxt("Modelo TC - julia/data/vEm.csv", delimiter=",")
-vEd = np.loadtxt("Modelo TC - julia/data/vEd.csv", delimiter=",")
-vIs = np.loadtxt("Modelo TC - julia/data/vIs.csv", delimiter=",")
-vErel = np.loadtxt("Modelo TC - julia/data/vErel.csv", delimiter=",")
-vIret = np.loadtxt("Modelo TC - julia/data/vIret.csv", delimiter=",")
-cEs = np.loadtxt("Modelo TC - julia/data/cEs.csv", delimiter=",")
-cEm = np.loadtxt("Modelo TC - julia/data/cEm.csv", delimiter=",")
-cEd = np.loadtxt("Modelo TC - julia/data/cEd.csv", delimiter=",")
-cIs = np.loadtxt("Modelo TC - julia/data/cIs.csv", delimiter=",")
-cErel = np.loadtxt("Modelo TC - julia/data/cErel.csv", delimiter=",")
-cIret = np.loadtxt("Modelo TC - julia/data/cIret.csv", delimiter=",")
-nSim = len(vEs[0])
-fidD = 0 # 0 for PD condition, 1 for PD + DBS condition
-raster_plot(nEs,nEm,nEd,nINs,nErel,nIret,n_tot,vEs,vEm,vEd,vIs,vIret,vErel,cIret,cErel,cIs,cEd,cEm,cEs,nSim,dt,fidD)
+def plot_LFP(lfp, title):
+    new_time = np.arange(len(lfp)) * 0.1
+    plt.figure(figsize=(8, 4))
+    plt.plot(new_time, lfp, c='k', linewidth=1)
+    #plt.title(title)
+    plt.xlabel('Tempo (ms)')
+    plt.ylabel('LFP')
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig(f'plots/{title}.png', bbox_inches="tight")
+    plt.close()
 
 def PSD(signal, fs):
-    (f, S) = scipy.signal.welch(signal, fs, nperseg=10*1024)
-    
+    nperseg = 10240  # 10 * 1024 para resolução alta
+    f, S = scipy.signal.welch(signal, fs=fs, nperseg=nperseg, noverlap=nperseg//2, window='hann')
     return f, S
 
-def plot_PSD(f, S):
-    x_arr = np.arange(0, 101, 10)
-    
-    plt.figure()
-    plt.plot(f, S, c='k', linewidth=1)
-    plt.axvspan(13, 30, color='grey', alpha=0.3)
-    plt.xlim([0, 100])
-    plt.xticks(x_arr)
-    plt.xlabel('frequency (Hz)')
-    plt.ylabel(r'PSD [$mV^2/Hz$]')
-    plt.title('PSD')
-    plt.savefig('Modelo TC - julia\plots\PSD.png')
-    plt.close()
-    
-def plot_LFP(lfp, title):
-    new_time= np.transpose(np.arange(len(lfp)))
-    
-    plt.figure()
-    
-    plt.title(title)
+def butter_bandpass(lowcut, highcut, fs, order=3):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = scipy.signal.butter(order, [low, high], btype='band')
+    return b, a
 
-    plt.plot(new_time*0.1, lfp, c='k', linewidth=1)
-    
-    # Set the x-axis label
-    plt.xlabel('Time (ms)')
-    plt.ylabel('LFP')
-    
-    plt.savefig(f'Modelo TC - julia\plots\{title}.png')
-    plt.close()
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=3):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = scipy.signal.filtfilt(b, a, data)  # filtfilt evita distorção de fase
+    return y
 
+# Carregamento dos dados
+ZZ_diff = np.loadtxt("data/ZZ_diff.csv", delimiter=",")
+Zx_diff = np.loadtxt("data/Zx_diff.csv", delimiter=",")
+plot_coupling_matrix(ZZ_diff, Zx_diff, 'Difference')
 
-LFP = np.loadtxt("Modelo TC - julia/data/LFP.csv", delimiter=",")
+I_dbs_pre = np.loadtxt("data/I_dbs_pre.csv", delimiter=",")
+I_dbs_post = np.loadtxt("data/I_dbs_post.csv", delimiter=",")
+dbs_plot(I_dbs_pre, "plots/DBS_pre")
+dbs_plot(I_dbs_post, "plots/DBS_post")
+
+dt = 0.1
+nEs, nEm, nEd, nErel, nINs, nIret = 100, 100, 100, 100, 100, 40
+n_tot = nEs + nEm + nEd + nINs + nErel + nIret
+
+vEs = np.loadtxt("data/vEs.csv", delimiter=",")
+vEm = np.loadtxt("data/vEm.csv", delimiter=",")
+vEd = np.loadtxt("data/vEd.csv", delimiter=",")
+vIs = np.loadtxt("data/vIs.csv", delimiter=",")
+vErel = np.loadtxt("data/vErel.csv", delimiter=",")
+vIret = np.loadtxt("data/vIret.csv", delimiter=",")
+
+cEs = np.loadtxt("data/cEs.csv", delimiter=",")
+cEm = np.loadtxt("data/cEm.csv", delimiter=",")
+cEd = np.loadtxt("data/cEd.csv", delimiter=",")
+cIs = np.loadtxt("data/cIs.csv", delimiter=",")
+cErel = np.loadtxt("data/cErel.csv", delimiter=",")
+cIret = np.loadtxt("data/cIret.csv", delimiter=",")
+
+nSim = len(vEs[0])
+fidD = 0  # 0 para PD, 1 para PD + DBS
+
+raster_plot(nEs, nEm, nEd, nINs, nErel, nIret, n_tot,
+            vEs, vEm, vEd, vIs, vIret, vErel,
+            cIret, cErel, cIs, cEd, cEm, cEs,
+            nSim, dt, fidD)
+
+LFP = np.loadtxt("data/LFP.csv", delimiter=",")
+lowcut = 13
+highcut = 30
+fs = 1000 / dt
+
+LFP = butter_bandpass_filter(LFP, lowcut, highcut, fs, order=3)
 plot_LFP(LFP, "LFP")
 
-# Compute Power Spectral Density using Welch's method
-frequencies, psd = PSD(LFP, fs=1000/dt)
+frequencies, psd = PSD(LFP, fs=fs)
 plot_PSD(frequencies, psd)
