@@ -87,8 +87,8 @@ def raster_plot(nEs,nEm,nEd,nINs,nErel,nIret,n_tot,vEs,vEm,vEd,vIs,vRet,vRel,cIr
 
     color1 = ['orange', 'cyan', 'green', 'magenta', 'blue', 'red']
     color2 = ['gold', 'blue', 'cyan', 'magenta', 'green', 'red', 'green', 'green', 'red']
-    structures = ['TRN', 'TCR', 'CI', 'D', 'M', 'S']
-    neuron_types = ['TR', 'TC', 'FS', 'LTS', 'RS', 'IB', 'RS', 'RS', 'IB']
+    structures = ['Ret', 'Rel', 'INs', 'P', 'M', 'S']
+    neuron_types = ['Ret', 'Rel', 'RAP', 'BLD', 'REG', 'RAJ', 'REG', 'REG', 'RAJ']
 
     t_tot = nSim*dt
     #for i in magenta_lines:
@@ -123,57 +123,13 @@ def raster_plot(nEs,nEm,nEd,nINs,nErel,nIret,n_tot,vEs,vEm,vEd,vIs,vRet,vRel,cIr
     plt.savefig(figdest + ".png")
     plt.close()
 
-def plot_PSD(f, S):
-    plt.figure(figsize=(8, 4))
-    plt.plot(f, S, c='k', linewidth=1)
-    plt.axvspan(13, 30, color='grey', alpha=0.3, label='Banda Beta')
-    plt.xlim([0, 100])
-    plt.xticks(np.arange(0, 101, 10))
-    plt.xlabel('Frequência (Hz)')
-    plt.ylabel(r'PSD [$mV^2$/Hz]')
-    #plt.title('Densidade Espectral de Potência (PSD)')
-    plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.tight_layout()
-    plt.savefig('plots/PSD.png', bbox_inches="tight")
-    plt.close()
-
-def plot_LFP(lfp, title):
-    new_time = np.arange(len(lfp)) * 0.1
-    plt.figure(figsize=(8, 4))
-    plt.plot(new_time, lfp, c='k', linewidth=1)
-    #plt.title(title)
-    plt.xlabel('Tempo (ms)')
-    plt.ylabel('LFP')
-    plt.grid(True, linestyle='--', alpha=0.5)
-    plt.tight_layout()
-    plt.savefig(f'plots/{title}.png', bbox_inches="tight")
-    plt.close()
-
-def PSD(signal, fs):
-    nperseg = 10240  # 10 * 1024 para resolução alta
-    f, S = scipy.signal.welch(signal, fs=fs, nperseg=nperseg, noverlap=nperseg//2, window='hann')
-    return f, S
-
-def butter_bandpass(lowcut, highcut, fs, order=3):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = scipy.signal.butter(order, [low, high], btype='band')
-    return b, a
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=3):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = scipy.signal.filtfilt(b, a, data)  # filtfilt evita distorção de fase
-    return y
-
 # Carregamento dos dados
-ZZ_diff = np.loadtxt("data/ZZ_diff.csv", delimiter=",")
-Zx_diff = np.loadtxt("data/Zx_diff.csv", delimiter=",")
+ZZ_diff = np.loadtxt("dp_15s/ZZ_diff.csv", delimiter=",")
+Zx_diff = np.loadtxt("dp_15s/Zx_diff.csv", delimiter=",")
 plot_coupling_matrix(ZZ_diff, Zx_diff, 'Difference')
 
-I_dbs_pre = np.loadtxt("data/I_dbs_pre.csv", delimiter=",")
-I_dbs_post = np.loadtxt("data/I_dbs_post.csv", delimiter=",")
+I_dbs_pre = np.loadtxt("dp_15s/I_dbs_pre.csv", delimiter=",")
+I_dbs_post = np.loadtxt("dp_15s/I_dbs_post.csv", delimiter=",")
 dbs_plot(I_dbs_pre, "plots/DBS_pre")
 dbs_plot(I_dbs_post, "plots/DBS_post")
 
@@ -181,35 +137,32 @@ dt = 0.1
 nEs, nEm, nEd, nErel, nINs, nIret = 100, 100, 100, 100, 100, 40
 n_tot = nEs + nEm + nEd + nINs + nErel + nIret
 
-vEs = np.loadtxt("data/vEs.csv", delimiter=",")
-vEm = np.loadtxt("data/vEm.csv", delimiter=",")
-vEd = np.loadtxt("data/vEd.csv", delimiter=",")
-vIs = np.loadtxt("data/vIs.csv", delimiter=",")
-vErel = np.loadtxt("data/vErel.csv", delimiter=",")
-vIret = np.loadtxt("data/vIret.csv", delimiter=",")
+vEs = np.loadtxt("dp_15s/vEs.csv", delimiter=",")
+vEm = np.loadtxt("dp_15s/vEm.csv", delimiter=",")
+vEd = np.loadtxt("dp_15s/vEd.csv", delimiter=",")
+vIs = np.loadtxt("dp_15s/vIs.csv", delimiter=",")
+vErel = np.loadtxt("dp_15s/vErel.csv", delimiter=",")
+vIret = np.loadtxt("dp_15s/vIret.csv", delimiter=",")
 
-cEs = np.loadtxt("data/cEs.csv", delimiter=",")
-cEm = np.loadtxt("data/cEm.csv", delimiter=",")
-cEd = np.loadtxt("data/cEd.csv", delimiter=",")
-cIs = np.loadtxt("data/cIs.csv", delimiter=",")
-cErel = np.loadtxt("data/cErel.csv", delimiter=",")
-cIret = np.loadtxt("data/cIret.csv", delimiter=",")
+cEs = np.loadtxt("dp_15s/cEs.csv", delimiter=",")
+cEm = np.loadtxt("dp_15s/cEm.csv", delimiter=",")
+cEd = np.loadtxt("dp_15s/cEd.csv", delimiter=",")
+cIs = np.loadtxt("dp_15s/cIs.csv", delimiter=",")
+cErel = np.loadtxt("dp_15s/cErel.csv", delimiter=",")
+cIret = np.loadtxt("dp_15s/cIret.csv", delimiter=",")
+
+vEs = vEs[:nEs, 50000:100000]
+vEm = vEm[:nEm, 50000:100000]
+vEd = vEd[:nEd, 50000:100000]
+vIs = vIs[:nINs, 50000:100000]
+vErel = vErel[:nErel, 50000:100000]
+vIret = vIret[:nIret, 50000:100000]
 
 nSim = len(vEs[0])
 fidD = 0  # 0 para PD, 1 para PD + DBS
+
 
 raster_plot(nEs, nEm, nEd, nINs, nErel, nIret, n_tot,
             vEs, vEm, vEd, vIs, vIret, vErel,
             cIret, cErel, cIs, cEd, cEm, cEs,
             nSim, dt, fidD)
-
-LFP = np.loadtxt("data/LFP.csv", delimiter=",")
-lowcut = 13
-highcut = 30
-fs = 1000 / dt
-
-LFP = butter_bandpass_filter(LFP, lowcut, highcut, fs, order=3)
-plot_LFP(LFP, "LFP")
-
-frequencies, psd = PSD(LFP, fs=fs)
-plot_PSD(frequencies, psd)
